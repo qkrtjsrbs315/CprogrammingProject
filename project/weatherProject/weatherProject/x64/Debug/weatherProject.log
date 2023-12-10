@@ -1,4 +1,0 @@
-﻿  main.cpp
-C:\Users\qkrtj\Desktop\C프로그래밍\project\weatherProject\weatherProject\main.cpp(30,9): warning C4996: 'scanf': This function or variable may be unsafe. Consider using scanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-C:\Users\qkrtj\Desktop\C프로그래밍\project\weatherProject\weatherProject\main.cpp(36,9): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-  weatherProject.vcxproj -> C:\Users\qkrtj\Desktop\C프로그래밍\project\weatherProject\x64\Debug\weatherProject.exe
