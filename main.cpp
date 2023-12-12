@@ -6,6 +6,8 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <time.h>
+#include <thread>
+#include <chrono>
 
 using namespace cv;
 // 콜백 함수 정의
@@ -153,16 +155,18 @@ void ImageShow(const char weather[]){
    char path[256];
    sprintf(path,"./img/%s.png",weather);
    Mat img = imread(path);
+   
    if (img.empty()){
       printf("Error: Could not open or read the image file\n");
       return;
    }
    //check already open window
    printf("Change image");
-   namedWindow("Weather",WINDOW_AUTOSIZE);
-   
+   //namedWindow("Weather",WINDOW_AUTOSIZE);
+   while(true){
    imshow("Weather",img);
    waitKey(200);
+  }
 }
 //check O'clock
 bool isHourChecked(){
@@ -179,6 +183,7 @@ bool isHourChecked(){
 int main(void)
 {
     bool initialExecution = true;   
+    namedWindow("Weather",WINDOW_AUTOSIZE);
     while(true){
          //if time is o'clock
          if(initialExecution || isHourChecked()){
