@@ -1,7 +1,7 @@
 # CprogrammingProject
 
 #setting <br/>
-1. first clone this project
+1. first clone this project<br/>
    git clone https://github.com/qkrtjsrbs315/CprogrammingProject.git
 
 2. second download every package <br/>
@@ -14,4 +14,4 @@
 
 
 #command <br/>
-g++ -o <output file name> <input cpp file name> -lopencv_core -lopencv_highgui -lcurl -ljansson
+g++ -o &larr;output file name&rarr; &larr;input cpp file name&rarr; -lopencv_core -lopencv_highgui -lcurl -ljansson
