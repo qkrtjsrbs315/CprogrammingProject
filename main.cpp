@@ -11,6 +11,7 @@
 
 using namespace cv;
 // 콜백 함수 정의
+bool isImageShowTimeChecked();
 size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *userp)
 {
     size_t realsize = size * nmemb;
@@ -164,9 +165,11 @@ void ImageShow(const char weather[]){
    printf("Change image");
    //namedWindow("Weather",WINDOW_AUTOSIZE);
    while(true){
-   imshow("Weather",img);
-   waitKey(200);
+      imshow("Weather",img);
+      waitKey(200);
+      if(isImageShowTimeChecked()) break;
   }
+  return;
 }
 //check O'clock
 bool isHourChecked(){
@@ -180,6 +183,16 @@ bool isHourChecked(){
    return (timeinfo -> tm_sec == 0);
 }
 
+//check time for finish the infinite loop in ImageShow function
+bool isImageShowTimeChecked(){
+   time_t rawtime;
+   struct tm *timeinfo;
+   time(&rawtime);
+   timeinfo = localtime(&rawtime);
+   
+
+   return (timeinfo -> tm_sec == 57);
+}
 int main(void)
 {
     bool initialExecution = true;   
