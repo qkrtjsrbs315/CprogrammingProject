@@ -5,6 +5,7 @@
 #include <jansson.h>
 #include <opencv2/opencv.hpp>
 #include <opencv2/highgui/highgui.hpp>
+#include <time.h>
 
 using namespace cv;
 // 콜백 함수 정의
@@ -51,6 +52,7 @@ char *getCityFromIpInfo()
     // Extract city from the IP response
     json_error_t error;
     json_t *root = json_loads(ipResponseBuffer, 0, &error);
+    
     if (!root)
     {
         fprintf(stderr, "JSON parsing failed: %s\n, ip_response_buffer: %s\n", error.text,ipResponseBuffer);
@@ -109,6 +111,8 @@ char *getWeatherInfo(const char *city)
         json_t *root = json_loads(response_buffer, 0, &error);
         if (root)
         {
+            //response_buffer[res] = "\0";
+
             json_t *weather = json_object_get(root, "weather");
             if (json_array_size(weather) > 0)
             {
@@ -153,35 +157,56 @@ void ImageShow(const char weather[]){
       printf("Error: Could not open or read the image file\n");
       return;
    }
-   namedWindow("Weather",WINDOW_AUTOSIZE);
+   //check already open window
+   if(!cvGetWindowHandle("Weather")){
+     namedWindow("Weather",WINDOW_AUTOSIZE);
+
+   }  
+   
    imshow("Weather",img);
-   waitKey(0);
+   waitKey(1);
 
 
 
 
 }
+//check O'clock
+bool isHourChecked(){
+   time_t rawtime;
+   struct tm *timeinfo;
+  
+   time(&rawtime);
+   timeinfo = localtime(&rawtime);
+   
+   return (timeinfo -> tm_min == 0 && timeinfo->tm_sec == 0);
+   //return (timeinfo -> tm_sec == 0);
+}
 
 int main(void)
 {
-    char *city = getCityFromIpInfo();
-
-    if (city)
-    {
-        printf("now City: %s\n", city);
-        char *weather = getWeatherInfo(city);
-        printf("main function weather value : %s\n",weather);
-        ImageShow(weather);  
-
-
-        // 사용이 끝난 도시 정보 메모리 해제
-        free(weather);
-        free(city);
+    bool initialExecution = true;   
+    while(true){
+         //if time is o'clock
+         if(initialExecution || isHourChecked()){
+            char *city = getCityFromIpInfo();
+     
+            if (city)
+            {
+               printf("now City: %s\n", city);
+               char *weather = getWeatherInfo(city);
+               printf("main function weather value : %s\n",weather);
+               ImageShow(weather);
+            
+            
+               //사용이 끝난 도시 정보 메모리 해제
+               free(weather);
+               free(city);
+            }
+            else
+            {
+              printf("Can't fetch the City Info.\n");
+            }
+        }
     }
-    else
-    {
-        printf("Can't fetch the City Info.\n");
-    }
-
     return 0;
 }
