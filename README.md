@@ -4,7 +4,7 @@
 1. first clone this project
    git clone https://github.com/qkrtjsrbs315/CprogrammingProject.git
 
-2. second download every package
+2. second download every package <br/>
    sudo apt-get install libcurl4-openssl-dev    <!--curl package download--> <br/>
    sudo apt-get install libjansson-dev  <!--jansson package download--> <br/>
    sudo apt-get install libopencv-dev <!--opencv package download--> <br/>
