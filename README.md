@@ -14,4 +14,4 @@
 
 
 #command <br/>
-g++ -o \<output file name&\> \<input cpp file name\> -lopencv_core -lopencv_highgui -lcurl -ljansson
+g++ -o \<output file name&\> \<input cpp file name\> -lopencv_core -lopencv_highgui -lcurl -ljansson -std=c++11
