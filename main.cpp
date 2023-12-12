@@ -51,7 +51,7 @@ char *getCityFromIpInfo()
 
     // Extract city from the IP response
     json_error_t error;
-    json_t *root = json_loads(ipResponseBuffer, 0, &error);
+    json_t *root = json_loads(ipResponseBuffer, JSON_DECODE_ANY | JSON_DISABLE_EOF_CHECK, &error);
     
     if (!root)
     {
@@ -108,7 +108,7 @@ char *getWeatherInfo(const char *city)
     else
     {
         // JSON 파싱 및 "main" 값 추출
-        json_t *root = json_loads(response_buffer, 0, &error);
+        json_t *root = json_loads(response_buffer, JSON_DECODE_ANY | JSON_DISABLE_EOF_CHECK, &error);
         if (root)
         {
             //response_buffer[res] = "\0";
@@ -158,17 +158,11 @@ void ImageShow(const char weather[]){
       return;
    }
    //check already open window
-   if(!cvGetWindowHandle("Weather")){
-     namedWindow("Weather",WINDOW_AUTOSIZE);
-
-   }  
+   printf("Change image");
+   namedWindow("Weather",WINDOW_AUTOSIZE);
    
    imshow("Weather",img);
-   waitKey(1);
-
-
-
-
+   waitKey(200);
 }
 //check O'clock
 bool isHourChecked(){
@@ -178,8 +172,8 @@ bool isHourChecked(){
    time(&rawtime);
    timeinfo = localtime(&rawtime);
    
-   return (timeinfo -> tm_min == 0 && timeinfo->tm_sec == 0);
-   //return (timeinfo -> tm_sec == 0);
+   //return (timeinfo -> tm_min == 0 && timeinfo->tm_sec == 0);
+   return (timeinfo -> tm_sec == 0);
 }
 
 int main(void)
@@ -197,9 +191,9 @@ int main(void)
                printf("main function weather value : %s\n",weather);
                printf("%s\n",weather);
                if(strstr(weather,"Clear") != NULL) ImageShow("Clear");
-               else if(weather == "Clouds") ImageShow("Clouds");
-               else if(weather == "rains") ImageShow("Rain");
-               else if(weather == "snow") ImageShow("Snow");
+               else if(strstr(weather,"Clouds") != NULL) ImageShow("Clouds");
+               else if(strstr(weather,"rains") != NULL) ImageShow("Rain");
+               else if(strstr(weather,"snow") != NULL) ImageShow("Snow");
                else printf("wtf");            
                //사용이 끝난 도시 정보 메모리 해제
                free(weather);
