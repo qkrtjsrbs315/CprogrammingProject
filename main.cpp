@@ -22,7 +22,7 @@ char *getCityFromIpInfo()
     CURL *curl;
     CURLcode res;
     char ipUrl[] = "http://ipinfo.io/json";
-    char ipResponseBuffer[512];
+    char ipResponseBuffer[4096];
 
     // libcurl 초기화
     curl_global_init(CURL_GLOBAL_DEFAULT);
@@ -53,7 +53,7 @@ char *getCityFromIpInfo()
     json_t *root = json_loads(ipResponseBuffer, 0, &error);
     if (!root)
     {
-        fprintf(stderr, "JSON parsing failed: %s\n", error.text);
+        fprintf(stderr, "JSON parsing failed: %s\n, ip_response_buffer: %s\n", error.text,ipResponseBuffer);
         return NULL;
     }
 
@@ -86,7 +86,7 @@ char *getWeatherInfo(const char *city)
     if (!curl)
     {
         fprintf(stderr, "Curl initialization failed.\n");
-        return -1;
+        return NULL;
     }
 
     snprintf(weatherUrl, sizeof(weatherUrl), "http://api.openweathermap.org/data/2.5/weather?q=%s&appid=%s", city, apiKey);
@@ -120,15 +120,20 @@ char *getWeatherInfo(const char *city)
                     const char *mainString = json_string_value(mainValue);
                     printf("now weather: %s\n", mainString);
                     
-                    return strdup(mainString);
+  		    char *result = strdup(mainString);
+                    json_decref(root);
+                    curl_easy_cleanup(curl);
+                    curl_global_cleanup();
+    
+                    return result;
                  }
             }
 
-            json_decref(root);
+             json_decref(root);
         }
         else
         {
-            fprintf(stderr, "JSON parsing failed: %s\n", error.text);
+            fprintf(stderr, "JSON parsing failed: %s\n Weather response buffer: %s\n", error.text,response_buffer);
         }
     }
 
@@ -137,12 +142,12 @@ char *getWeatherInfo(const char *city)
     // libcurl 정리
     curl_global_cleanup();
 
-    return -1;
+    return NULL;
 
 }
 void ImageShow(const char weather[]){
    char path[256];
-   sprintf(path,"./img/%s.jpeg","rain");
+   sprintf(path,"./img/%s.png",weather);
    Mat img = imread(path);
    if (img.empty()){
       printf("Error: Could not open or read the image file\n");
@@ -166,7 +171,7 @@ int main(void)
         printf("now City: %s\n", city);
         char *weather = getWeatherInfo(city);
         printf("main function weather value : %s\n",weather);
-  
+        ImageShow(weather);  
 
 
         // 사용이 끝난 도시 정보 메모리 해제

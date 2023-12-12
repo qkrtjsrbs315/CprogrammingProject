@@ -1,0 +1,129 @@
+  663  sudo apt install cmake
+  664  git --v
+  665  git clone https://github.com/qkrtjsrbs315/CprogrammingProject.git
+  666  gcc -v
+  667  gcc -u
+  668  g++ -v
+  669  sudo apt install gcc-ll
+  670  sudo apt install gcc-11
+  671  sudo apt
+  672  clear
+  673  ls
+  674  cd Desktop/
+  675  ls
+  676  git clone https://github.com/qkrtjsrbs315/CprogrammingProject.git
+  677  ls
+  678  cd CprogrammingProject/
+  679  ls
+  680  ls -al
+  681  git switch vscode
+  682  git branch vscode
+  683  ls
+  684  ls -al
+  685  git remote -v
+  686  git remote -a
+  687  git remote -r
+  688  git branch vscode
+  689  git checkout vscode
+  690  ls
+  691  ls -al
+  692  git pull
+  693  git branch --set-upstream-to=origin/<branch> vscode
+  694  git branch --set-upstream-to=origin/vscode
+  695  ls
+  696  ls -al
+  697  cd ..
+  698  ls
+  699  rm CprogrammingProject/
+  700  rmdir CprogrammingProject/
+  701  rmdir -a CprogrammingProject/
+  702  rm -r CprogrammingProject/
+  703  rm -rf CprogrammingProject/
+  704  ls
+  705  clear
+  706  git clone -b vscode https://github.com/qkrtjsrbs315/CprogrammingProject.git
+  707  ls
+  708  cd CprogrammingProject/
+  709  ls
+  710  cd Cproject/
+  711  ls
+  712  gcc -o main.c
+  713  gcc -o main main.c
+  714  sudo apt get install  curl
+  715  sudo apt install curl
+  716  ls
+  717  sudo apt install curl
+  718  gcc -o main main.c
+  719  sudo apt-get install libcurl4-openssl-dev
+  720  ls
+  721  gcc -o main main.c -lcurl
+  722  sudo apt-get install libjansson-dev
+  723  gcc -o main main.c -lcurl -ljansson
+  724  ls
+  725  ./main
+  726  sudo apt-get install libopencv-dev
+  727  ls -al
+  728  vi opencv.c
+  729  ls
+  730  cd ..
+  731  ls
+  732  cd Cproject/
+  733  ls
+  734  vi opencv.c
+  735  mv opencv.c opencv.cpp
+  736  ls
+  737  g++ opencv.cpp -o opencv `pkg-config --cflag --libs opencv`
+  738  ls
+  739  pkg-config --cflag --libs opencv
+  740  pkg-config --libs opencv
+  741  g++ opencv.cpp -o opencv `pkg-config --libs opencv`
+  742  g++ opencv.cpp -o opencv `pkg-config -libs opencv`
+  743  find / "opencv.cpp"
+  744  clear
+  745  g++ opencv.cpp -o opencv `pkg-config --libs opencv`
+  746  find / --name opencv.cpp
+  747  find / -name opencv.cpp
+  748  find / -name opencv2/opencv.cpp
+  749  find / -name opencv2/
+  750  ls
+  751  cd /usr
+  752  ls
+  753  cd lib
+  754  ls
+  755  cd
+  756  cd /Desktop
+  757  cd
+  758  ls
+  759  cd Desktop/
+  760  ls
+  761  cd CprogrammingProject/
+  762  ls
+  763  cd Cproject/
+  764  ls
+  765  g++ -o opencv opencv.cpp -lopencv_core -lopencv_highgui
+  766  vi opencv.cpp 
+  767  g++ -o opencv opencv.cpp -lopencv_core -lopencv_highgui -L /usr/lib
+  768  vi opencv.cpp 
+  769  ls
+  770  cd /usr
+  771  ls
+  772  cd include/
+  773  ls
+  774  find openv
+  775  find opencv
+  776  cd opencv2
+  777  ls
+  778  cd ..
+  779  cd /Desktop/CProgramming
+  780  cd
+  781  cd Desktop/CprogrammingProject/Cproject/
+  782  l;s
+  783  vi opencv.cpp 
+  784  g++ -o opencv opencv.cpp -lopencv_core -lopencv_highgui
+  785  vi opencv.cpp 
+  786  g++ -o opencv opencv.cpp -lopencv_core -lopencv_highgui
+  787  vi opencv.cpp 
+  788  g++ -o opencv opencv.cpp -lopencv_core -lopencv_highgui
+  789  ls
+  790  ./opencv 
+  791  history > command_history.txt
