@@ -10,8 +10,10 @@
 #include <chrono>
 
 using namespace cv;
-// 콜백 함수 정의
+
 bool isImageShowTimeChecked();
+double kToC(double k);
+
 size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *userp)
 {
     size_t realsize = size * nmemb;
@@ -19,8 +21,11 @@ size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *userp)
     memcpy(data, contents, realsize);
     return realsize;
 }
+//kelvin to Celcious
+double kToC(double k) {
+    return (k - 273.15);
+}
 
-// ipinfo.io에서 현재 IP의 도시를 가져오는 함수
 char *getCityFromIpInfo()
 {
     CURL *curl;
@@ -28,7 +33,6 @@ char *getCityFromIpInfo()
     char ipUrl[] = "http://ipinfo.io/json";
     char ipResponseBuffer[4096];
 
-    // libcurl 초기화
     curl_global_init(CURL_GLOBAL_DEFAULT);
 
     curl = curl_easy_init();
@@ -52,39 +56,82 @@ char *getCityFromIpInfo()
         return NULL;
     }
 
-    // Extract city from the IP response
     json_error_t error;
     json_t *root = json_loads(ipResponseBuffer, JSON_DECODE_ANY | JSON_DISABLE_EOF_CHECK, &error);
-    
+
     if (!root)
     {
-        fprintf(stderr, "JSON parsing failed: %s\n, ip_response_buffer: %s\n", error.text,ipResponseBuffer);
+        fprintf(stderr, "JSON parsing failed: %s\n Weather response buffer: %s\n", error.text, ipResponseBuffer);
         return NULL;
     }
 
-    // Extract the "city" value
     const char *city = json_string_value(json_object_get(root, "city"));
-
-    // Print the extracted "city" value
     printf("City: %s\n", city);
 
-    // curl 핸들 정리
     curl_easy_cleanup(curl);
-    // libcurl 정리
     curl_global_cleanup();
 
     return strdup(city);
 }
 
-// OpenWeatherMap API에서 날씨 정보를 가져오는 함수
-char *getWeatherInfo(const char *city)
+void ImageShow(const char weather[], double *temperature)
+{
+    char path[256];
+    sprintf(path, "./img/%s.png", weather);
+    Mat img = imread(path);
+
+    if (img.empty())
+    {
+        printf("Error: Could not open or read the image file\n");
+        return;
+    }
+
+    // 기온 정보 표시
+    char temperatureString[20];
+    snprintf(temperatureString, sizeof(temperatureString), "Temperature: %.2f C", *temperature);
+    putText(img, temperatureString, Point(10, 30), FONT_HERSHEY_SIMPLEX, 1, Scalar(255, 255, 255), 2);
+
+    while (true)
+    {
+        imshow("Weather", img);
+        waitKey(200);
+        if (isImageShowTimeChecked())
+            break;
+    }
+
+    return;
+}
+
+bool isHourChecked()
+{
+    time_t rawtime;
+    struct tm *timeinfo;
+
+    time(&rawtime);
+    timeinfo = localtime(&rawtime);
+
+    return (timeinfo->tm_sec == 0);
+}
+
+//for infinity loop escape in ImageShow
+bool isImageShowTimeChecked()
+{
+    time_t rawtime;
+    struct tm *timeinfo;
+    time(&rawtime);
+    timeinfo = localtime(&rawtime);
+
+    return (timeinfo->tm_sec == 57);
+}
+
+char *getWeatherInfo(const char *city, double *temperature)
 {
     CURL *curl;
     CURLcode res;
     char apiKey[] = "62ab1a82ccdc8f500c06ce702ca2f432";
     char weatherUrl[256];
     json_error_t error;
-    // libcurl 초기화
+
     curl_global_init(CURL_GLOBAL_DEFAULT);
 
     curl = curl_easy_init();
@@ -110,11 +157,20 @@ char *getWeatherInfo(const char *city)
     }
     else
     {
-        // JSON 파싱 및 "main" 값 추출
         json_t *root = json_loads(response_buffer, JSON_DECODE_ANY | JSON_DISABLE_EOF_CHECK, &error);
         if (root)
         {
-            //response_buffer[res] = "\0";
+            json_t *mainObject = json_object_get(root, "main");
+            if (mainObject)
+            {
+                json_t *tempValue = json_object_get(mainObject, "temp");
+                if (json_is_real(tempValue))
+                {
+                    *temperature = json_real_value(tempValue);
+                    *temperature = kToC(*temperature);
+                    printf("Temperature: %.2f Celsius\n", *temperature);
+                }
+            }
 
             json_t *weather = json_object_get(root, "weather");
             if (json_array_size(weather) > 0)
@@ -125,105 +181,73 @@ char *getWeatherInfo(const char *city)
                 if (json_is_string(mainValue))
                 {
                     const char *mainString = json_string_value(mainValue);
-                    printf("now weather: %s\n", mainString);
-                    
-  		    char *result = strdup(mainString);
+                    printf("Now weather: %s\n", mainString);
+
+                    char *result = strdup(mainString);
                     json_decref(root);
                     curl_easy_cleanup(curl);
                     curl_global_cleanup();
-    
+
                     return result;
-                 }
+                }
             }
 
-             json_decref(root);
+            json_decref(root);
         }
         else
         {
-            fprintf(stderr, "JSON parsing failed: %s\n Weather response buffer: %s\n", error.text,response_buffer);
+            fprintf(stderr, "JSON parsing failed: %s\n Weather response buffer: %s\n", error.text, response_buffer);
         }
     }
 
-    // curl 핸들 정리
     curl_easy_cleanup(curl);
-    // libcurl 정리
     curl_global_cleanup();
 
     return NULL;
-
-}
-void ImageShow(const char weather[]){
-   char path[256];
-   sprintf(path,"./img/%s.png",weather);
-   Mat img = imread(path);
-   
-   if (img.empty()){
-      printf("Error: Could not open or read the image file\n");
-      return;
-   }
-   //check already open window
-   printf("Change image");
-   //namedWindow("Weather",WINDOW_AUTOSIZE);
-   while(true){
-      imshow("Weather",img);
-      waitKey(200);
-      if(isImageShowTimeChecked()) break;
-  }
-  return;
-}
-//check O'clock
-bool isHourChecked(){
-   time_t rawtime;
-   struct tm *timeinfo;
-  
-   time(&rawtime);
-   timeinfo = localtime(&rawtime);
-   
-   //return (timeinfo -> tm_min == 0 && timeinfo->tm_sec == 0);
-   return (timeinfo -> tm_sec == 0);
 }
 
-//check time for finish the infinite loop in ImageShow function
-bool isImageShowTimeChecked(){
-   time_t rawtime;
-   struct tm *timeinfo;
-   time(&rawtime);
-   timeinfo = localtime(&rawtime);
-   
-
-   return (timeinfo -> tm_sec == 57);
-}
 int main(void)
 {
-    bool initialExecution = true;   
-    namedWindow("Weather",WINDOW_AUTOSIZE);
-    while(true){
-         //if time is o'clock
-         if(initialExecution || isHourChecked()){
+    bool initialExecution = true;
+    namedWindow("Weather", WINDOW_AUTOSIZE);
+
+    while (true)
+    {
+        if (initialExecution || isHourChecked())
+        {
             char *city = getCityFromIpInfo();
-     
+
             if (city)
             {
-               printf("now City: %s\n", city);
-               char *weather = getWeatherInfo(city);
-               printf("main function weather value : %s\n",weather);
-               printf("%s\n",weather);
-               if(strstr(weather,"Clear") != NULL) ImageShow("Clear");
-               else if(strstr(weather,"Clouds") != NULL) ImageShow("Clouds");
-               else if(strstr(weather,"rains") != NULL) ImageShow("Rain");
-               else if(strstr(weather,"snow") != NULL) ImageShow("Snow");
-               else printf("wtf");            
-               //사용이 끝난 도시 정보 메모리 해제
-               free(weather);
-               free(city);
-            }
+                printf("Now City: %s\n", city);
 
+                double temperature;
+                char *weather = getWeatherInfo(city, &temperature);
+                printf("Main function weather value: %s\n", weather);
+
+                if (strstr(weather, "Clear") != NULL)
+                    ImageShow("Clear", &temperature);
+                else if (strstr(weather, "Clouds") != NULL)
+                    ImageShow("Clouds", &temperature);
+                else if (strstr(weather, "Rain") != NULL)
+                    ImageShow("Rain", &temperature);
+                else if (strstr(weather, "Snow") != NULL)
+                    ImageShow("Snow", &temperature);
+                else
+                    printf("Unexpected weather condition\n");
+
+                free(weather);
+                free(city);
+            }
             else
             {
-              printf("Can't fetch the City Info.\n");
+                printf("Can't fetch the City Info.\n");
             }
-       initialExecution = false; 
-       }
+
+            initialExecution = false;
+        }
     }
+
     return 0;
 }
+
